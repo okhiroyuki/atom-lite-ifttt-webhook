@@ -23,13 +23,14 @@ void connect_wifi() {
     Serial.print(ssid);
     Serial.print(" / ");
     Serial.println(WiFi.localIP());
-    wifiClient.setCACert(test_ca_cert);
+    wifiClient.setCACert(ca_cert);
   }
 }
 
 void setup() {
   //Initialize serial and wait for port to open:
   M5.begin(true, false, true);
+  delay(50);
   
   Serial.begin(115200);
   
@@ -45,6 +46,10 @@ void setup() {
 
 void loop(){
   connect_wifi();
+  M5.update();
+  if (M5.Btn.isPressed()){
+    httpRequest("atom_lite_btn_pressed");
+  }
   if (start_state == HIGH){
     httpRequest("spotify_start");
     start_state = LOW;
