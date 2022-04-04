@@ -5,9 +5,6 @@
 #include "certificate.h"
 #include <WiFiClientSecure.h>
 
-volatile byte stop_state = LOW;
-volatile byte start_state = LOW;
-
 WiFiClientSecure wifiClient;
 
 void connect_wifi() {
@@ -37,11 +34,6 @@ void setup() {
   WiFi.mode(WIFI_STA);
   
   configTime( gmtOffset_sec, daylightOffset_sec, ntpServer);
-
-  pinMode(26, INPUT_PULLUP);
-  pinMode(32, INPUT_PULLUP);
-  attachInterrupt(26, interrupt_red_btn, RISING);
-  attachInterrupt(32, interrupt_blue_btn, RISING);
 }
 
 void loop(){
@@ -50,27 +42,7 @@ void loop(){
   if (M5.Btn.isPressed()){
     httpRequest("atom_lite_btn_pressed");
   }
-  if (start_state == HIGH){
-    httpRequest("spotify_start");
-    start_state = LOW;
-  }
-  if (stop_state == HIGH){
-    httpRequest("spotify_stop");
-    stop_state = LOW;
-  }
   delay(100);
-}
-
-void interrupt_red_btn(){
-  if (stop_state == LOW){
-    stop_state = HIGH;  
-  }
-}
-
-void interrupt_blue_btn(){
-  if (start_state == LOW){
-    start_state = HIGH; 
-  }
 }
 
 void httpRequest(String event) {
